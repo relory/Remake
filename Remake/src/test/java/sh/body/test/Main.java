@@ -15,7 +15,7 @@ public class Main {
     }
 
     public static void main(String[] args){
-        Remake.getInstance().initialize("C:\\Users\\ilyas\\OneDrive\\Bureau\\StellarTweaks\\Remake\\Engine\\x64\\Release\\Engine.dll");
+        Remake.getInstance().initialize("..\\Engine\\x64\\Release\\Engine.dll");
         test();
         Remake.getInstance().getTransformers().add(new ClassTransformer("sh/body/test/Main") {
 

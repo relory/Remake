@@ -5,6 +5,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 import sh.body.remake.transformer.ClassTransformer;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -30,7 +31,11 @@ public class Remake {
     }
 
     public void initialize(String libraryPath) {
-        System.load(libraryPath);
+        if(new File(libraryPath).isAbsolute())
+            System.load(libraryPath);
+        else
+            System.load(System.getProperty("user.dir") + "\\" + libraryPath);
+        
         _init();
         initialized = true;
     }
