@@ -1,45 +1,30 @@
 package sh.body.test;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.LdcInsnNode;
 import sh.body.remake.Remake;
-import sh.body.remake.transformer.ClassTransformer;
-
-import java.util.Arrays;
+import sh.body.test.transformers.MainTransformer;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class Main {
-
     public static void test(){
         System.out.println("Hello, World!");
     }
 
-    public static void main(String[] args){
-        Remake.getInstance().initialize("..\\Engine\\x64\\Release\\Engine.dll");
+    public static void main(final String[] args) throws FileNotFoundException {
+        initialize();
         test();
-        Remake.getInstance().getTransformers().add(new ClassTransformer("sh/body/test/Main") {
-
-            @Override
-            public void process(ClassNode classNode) {
-                System.out.println("[Transformer] Found class: " + classNode.name);
-                classNode.methods.stream()
-                        .filter(methodNode -> methodNode.name.equals("test"))
-                        .forEach(methodNode -> {
-                    methodNode.instructions.forEach((insn) -> {
-                        if(insn.getOpcode() == Opcodes.LDC) {
-                            LdcInsnNode ldc = (LdcInsnNode) insn;
-                            System.out.println("Changed ldc: " + ldc.cst);
-                            ldc.cst = "Hooked by remake <3";
-
-                        }
-                    });
-                });
-            }
-        });
-
-        Remake.getInstance().remake(Main.class);
+        transform();
         test();
-
     }
 
+    private static void initialize() throws FileNotFoundException {
+        //library Path (Shared Object on Linux, dylib on Darwin, and dll on Windows)
+        final String path = System.getProperty("user.home") + "/.remake/engine." + (System.getProperty("os.name").toLowerCase().contains("win") ? "dll" : "so");
+        Remake.getInstance().initialize(new File(path));
+    }
+
+    private static void transform() {
+        Remake.getInstance().getTransformers().add(new MainTransformer());
+        Remake.getInstance().remake(Main.class);
+    }
 }

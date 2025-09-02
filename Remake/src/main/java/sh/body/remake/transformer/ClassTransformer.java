@@ -5,13 +5,13 @@ import org.objectweb.asm.tree.ClassNode;
 public abstract class ClassTransformer {
     private final String className;
 
-    public ClassTransformer(String className){
+    public ClassTransformer(final String className) {
         this.className = className;
     }
 
-    public String getClassName(){
-        return className;
+    public String getClassName() {
+        return this.className;
     }
 
-    public abstract void process(ClassNode classNode);
+    public abstract void process(final ClassNode classNode);
 }
